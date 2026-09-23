@@ -237,11 +237,26 @@ interface CurrentWarPayload {
     destructionPercentage?: number;
   };
 }
+interface RaidSeasonMember {
+  tag: string;
+  name: string;
+  attacks: number;
+  attackLimit: number;
+  bonusAttackLimit: number;
+  capitalResourcesLooted: number;
+}
+
+interface RaidSeasonPayload {
+  items?: Array<{
+    state?: string;
+    members?: RaidSeasonMember[];
+  }>;
+}
 
 export async function syncClanFromApi(
   apiClanData: ApiClanPayload,
   currentWarData?: CurrentWarPayload | null,
-  _raidData?: unknown
+  raidData?: RaidSeasonPayload | null
 ) {
   const rules = await getScoringRules();
   const store = readLocalStore();
@@ -294,6 +309,15 @@ export async function syncClanFromApi(
     });
   }
 
+  // Build raid stats map from most recent raid season
+  const raidMemberMap = new Map<string, number>();
+  const latestRaid = raidData?.items?.[0];
+  if (latestRaid?.members) {
+    latestRaid.members.forEach((rm) => {
+      raidMemberMap.set(rm.tag, rm.attacks);
+    });
+  }
+
   const memberList: ApiClanMember[] = apiClanData.memberList || [];
   const updatedPlayers: PlayerRecord[] = memberList.map((m: ApiClanMember) => {
     const existing = existingMap.get(m.tag);
@@ -302,7 +326,7 @@ export async function syncClanFromApi(
     // If war data exists for this member, use it; otherwise preserve existing or null
     const warStars = warStats !== undefined ? warStats.stars : (existing?.warStars ?? null);
     const warDest = warStats !== undefined ? warStats.dest : (existing?.warDest ?? null);
-    const raidAtks = existing?.raidAtks ?? null;
+    const raidAtks = raidMemberMap.has(m.tag) ? raidMemberMap.get(m.tag)! : (existing?.raidAtks ?? null);
     const cgPoints = existing?.cgPoints ?? null;
     const missed = warStats !== undefined ? warStats.missed : (existing?.missed ?? 0);
 
