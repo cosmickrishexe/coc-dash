@@ -72,9 +72,6 @@ export default function DashboardPage() {
   const [rulesPasswordInput, setRulesPasswordInput] = useState<string>("");
   const [rulesAuthError, setRulesAuthError] = useState<boolean>(false);
 
-  // --- Penalty Auth State ---
-  const [isPenaltyUnlocked, setIsPenaltyUnlocked] = useState<boolean>(false);
-  const [penaltyPinInput, setPenaltyPinInput] = useState<string>("");
   const [tempRules, setTempRules] = useState<ScoringRules>(DEFAULT_RULES);
 
   // --- Dynamic Supercell API & IP Whitelist State ---
@@ -473,28 +470,6 @@ export default function DashboardPage() {
     }
   };
 
-  // --- Penalty Adjustment Handlers ---
-  const handleAdjustPenalty = async (delta: number) => {
-    if (!selectedPlayer) return;
-    try {
-      const res = await fetch("/api/clan/penalties", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playerTag: selectedPlayer.tag,
-          deltaMissed: delta,
-        }),
-      });
-      const json = await res.json();
-      if (json.success && json.data) {
-        setSelectedPlayer(json.data);
-        addToast(`Updated penalty for ${selectedPlayer.name}`, "success");
-        loadLeaderboard();
-      }
-    } catch (err: any) {
-      addToast("Failed to update penalty: " + err.message, "error");
-    }
-  };
 
   // Top KPIs
   const topPlayer = players.length > 0 ? players[0] : null;
@@ -2155,86 +2130,6 @@ export default function DashboardPage() {
                     </strong>
                   </div>
                 </div>
-              </div>
-
-              {/* Admin Penalty Controls */}
-              <div className="p-4 bg-surface-container-low border border-outline-variant rounded-xl space-y-3 font-mono">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-xs text-on-surface flex items-center gap-1.5">
-                    <span className={`material-symbols-outlined text-[14px] ${isPenaltyUnlocked ? "text-emerald-600" : "text-amber-600"}`}>
-                      {isPenaltyUnlocked ? "lock_open" : "lock"}
-                    </span>
-                    Admin Penalty Actions
-                  </span>
-                  {isPenaltyUnlocked && (
-                    <button onClick={() => setIsPenaltyUnlocked(false)} className="text-[10px] text-outline hover:text-on-surface underline">
-                      Lock
-                    </button>
-                  )}
-                </div>
-
-                {!isPenaltyUnlocked ? (
-                  <div className="space-y-2">
-                    <p className="text-[11px] text-on-surface-variant">
-                      Enter admin PIN to adjust penalties.
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <input 
-                        type="password"
-                        placeholder="PIN"
-                        value={penaltyPinInput}
-                        onChange={(e) => setPenaltyPinInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            if (penaltyPinInput === "9449") {
-                              setIsPenaltyUnlocked(true);
-                              setPenaltyPinInput("");
-                            } else {
-                              setPenaltyPinInput("");
-                              addToast("Incorrect PIN", "error");
-                            }
-                          }
-                        }}
-                        className="h-8 px-2 w-24 bg-surface-container-lowest border border-outline-variant rounded-lg text-xs outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                      />
-                      <button
-                        onClick={() => {
-                          if (penaltyPinInput === "9449") {
-                            setIsPenaltyUnlocked(true);
-                            setPenaltyPinInput("");
-                          } else {
-                            setPenaltyPinInput("");
-                            addToast("Incorrect PIN", "error");
-                          }
-                        }}
-                        className="h-8 px-3 bg-primary text-on-primary hover:bg-slate-700 rounded-lg text-xs font-semibold"
-                      >
-                        Unlock
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-[11px] text-on-surface-variant">
-                      Apply point deductions for missed war attacks or pardon existing infractions.
-                    </p>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => handleAdjustPenalty(1)}
-                        className="flex-1 py-2 px-3 bg-rose-50 text-rose-800 border border-rose-300 rounded-lg text-xs font-semibold hover:bg-rose-100 flex items-center justify-center gap-1"
-                      >
-                        <span>⚠️ Missed (-30)</span>
-                      </button>
-                      <button
-                        onClick={() => handleAdjustPenalty(-(selectedPlayer.missed ?? 0))}
-                        disabled={!selectedPlayer.missed || selectedPlayer.missed === 0}
-                        className="flex-1 py-2 px-3 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-semibold hover:bg-emerald-100 flex items-center justify-center gap-1 disabled:opacity-40"
-                      >
-                        <span>✓ Pardon</span>
-                      </button>
-                    </div>
-                  </>
-                )}
               </div>
 
             </div>
