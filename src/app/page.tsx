@@ -800,21 +800,21 @@ export default function DashboardPage() {
         </header>
 
         {/* Scrollable Canvas */}
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4 md:space-y-6">
           
           {/* Clan Hero Identity Banner */}
-          <div className="p-5 bg-surface-container-lowest border border-outline-variant rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between shadow-xs gap-4">
+          <div className="p-4 md:p-5 bg-surface-container-lowest border border-outline-variant rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between shadow-xs gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 shrink-0 rounded-2xl bg-surface-container-low border border-dashed border-outline flex items-center justify-center font-mono font-bold text-2xl text-primary">
+              <div className="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-2xl bg-surface-container-low border border-dashed border-outline flex items-center justify-center font-mono font-bold text-xl md:text-2xl text-primary">
                 {clan?.badgeUrl ? (
-                  <img src={clan.badgeUrl} alt="Badge" className="w-11 h-11 object-contain" />
+                  <img src={clan.badgeUrl} alt="Badge" className="w-9 h-9 md:w-11 md:h-11 object-contain" />
                 ) : (
                   "⚔️"
                 )}
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="font-bold text-base text-on-surface">{clan?.name || "--"}</h2>
+                  <h2 className="font-bold text-base md:text-lg text-on-surface">{clan?.name || "--"}</h2>
                   <span className="font-mono text-xs text-on-surface-variant">{clan?.tag || "--"}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1 flex-wrap">
@@ -838,7 +838,7 @@ export default function DashboardPage() {
                 Clan Average Master Score
               </span>
               <div className="flex items-baseline gap-1.5 mt-0.5">
-                <span className="font-mono text-2xl font-bold text-on-surface">
+                <span className="font-mono text-xl md:text-2xl font-bold text-on-surface">
                   {clanAvgScore !== null ? clanAvgScore.toLocaleString() : "--"}
                 </span>
                 <span className="text-xs font-mono text-on-surface-variant">pts</span>
@@ -856,7 +856,7 @@ export default function DashboardPage() {
                 <span className="material-symbols-outlined text-amber-700 text-base">military_tech</span>
               </div>
               <div className="my-2">
-                <span className="font-mono text-2xl font-bold text-on-surface">
+                <span className="font-mono text-xl md:text-2xl font-bold text-on-surface">
                   {topPlayer?.masterScore !== null && topPlayer?.masterScore !== undefined ? topPlayer.masterScore.toLocaleString() : "--"}
                 </span>
                 <span className="text-xs font-mono text-on-surface-variant ml-1">pts</span>
@@ -873,7 +873,7 @@ export default function DashboardPage() {
                 <span className="material-symbols-outlined text-primary text-base">swords</span>
               </div>
               <div className="my-2">
-                <span className="font-mono text-2xl font-bold text-on-surface">
+                <span className="font-mono text-xl md:text-2xl font-bold text-on-surface">
                   {clan?.warWins !== null && clan?.warWins !== undefined ? `${clan.warWins} Wins` : "-- Wins"}
                 </span>
               </div>
@@ -889,7 +889,7 @@ export default function DashboardPage() {
                 <span className="material-symbols-outlined text-primary text-base">fort</span>
               </div>
               <div className="my-2">
-                <span className="font-mono text-2xl font-bold text-on-surface">
+                <span className="font-mono text-xl md:text-2xl font-bold text-on-surface">
                   {totalRaidAttacks !== null ? `${totalRaidAttacks} / 300` : "-- / 300"}
                 </span>
               </div>
@@ -905,7 +905,7 @@ export default function DashboardPage() {
                 <span className="material-symbols-outlined text-emerald-700 text-base">auto_awesome</span>
               </div>
               <div className="my-2">
-                <span className="font-mono text-2xl font-bold text-on-surface">
+                <span className="font-mono text-xl md:text-2xl font-bold text-on-surface">
                   {totalCgPoints !== null ? totalCgPoints.toLocaleString() : "--"}
                 </span>
                 <span className="text-xs font-mono text-on-surface-variant ml-1">pts</span>
@@ -1098,7 +1098,7 @@ export default function DashboardPage() {
                     {loading ? (
                       <tr>
                         <td colSpan={10} className="py-12 text-center font-mono text-on-surface-variant">
-                          <span className="material-symbols-outlined text-3xl text-outline mb-2 animate-spin block">
+                          <span className="material-symbols-outlined text-2xl md:text-3xl text-outline mb-2 animate-spin block">
                             sync
                           </span>
                           Loading clan data...
@@ -1107,7 +1107,7 @@ export default function DashboardPage() {
                     ) : pageItems.length === 0 ? (
                       <tr>
                         <td colSpan={10} className="py-12 text-center font-mono text-on-surface-variant">
-                          <span className="material-symbols-outlined text-3xl text-outline mb-2 block">
+                          <span className="material-symbols-outlined text-2xl md:text-3xl text-outline mb-2 block">
                             database
                           </span>
                           No player records synchronized yet.
@@ -1407,7 +1407,7 @@ export default function DashboardPage() {
                     onClick={() => fileInputRef.current?.click()}
                     className="border-2 border-dashed border-outline rounded-2xl p-8 text-center cursor-pointer hover:border-primary hover:bg-surface-container-low transition-all"
                   >
-                    <span className="material-symbols-outlined text-4xl text-primary mb-2 block">
+                    <span className="material-symbols-outlined text-3xl md:text-4xl text-primary mb-2 block">
                       cloud_upload
                     </span>
                     <span className="font-bold text-on-surface block text-sm">
@@ -1550,16 +1550,16 @@ export default function DashboardPage() {
             <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
               <div className="text-center flex-1">
                 <div className="text-[10px] font-mono opacity-70 mb-1">{warData.clanName || "Our Clan"}</div>
-                <div className="font-mono font-black text-3xl text-yellow-300">⭐ {warData.clanStars}</div>
+                <div className="font-mono font-black text-2xl md:text-3xl text-yellow-300">⭐ {warData.clanStars}</div>
                 <div className="text-[11px] font-mono opacity-80">{warData.clanDestruction?.toFixed(1)}% destruction</div>
               </div>
               <div className="text-center px-4">
                 <div className="text-[10px] font-mono opacity-60 mb-1">VS</div>
-                <div className="font-mono text-lg font-bold opacity-60">⚔️</div>
+                <div className="font-mono text-base md:text-lg font-bold opacity-60">⚔️</div>
               </div>
               <div className="text-center flex-1">
                 <div className="text-[10px] font-mono opacity-70 mb-1">{warData.opponentName || "Opponent"}</div>
-                <div className="font-mono font-black text-3xl text-red-300">⭐ {warData.opponentStars}</div>
+                <div className="font-mono font-black text-2xl md:text-3xl text-red-300">⭐ {warData.opponentStars}</div>
                 <div className="text-[11px] font-mono opacity-80">{warData.opponentDestruction?.toFixed(1)}% destruction</div>
               </div>
             </div>
@@ -2080,7 +2080,7 @@ export default function DashboardPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-base text-on-surface">{selectedPlayer.name}</h3>
+                    <h3 className="font-bold text-base md:text-lg text-on-surface">{selectedPlayer.name}</h3>
                     {selectedPlayer.th && (
                       <span className="px-1.5 py-0.2 bg-surface-container-high rounded text-[10px] font-mono font-bold">
                         TH{selectedPlayer.th}
@@ -2109,7 +2109,7 @@ export default function DashboardPage() {
               <div className="p-4 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-between">
                 <div>
                   <span className="text-[11px] font-mono text-on-surface-variant block">Cumulative Master Score</span>
-                  <span className="font-mono text-2xl font-bold text-on-surface">
+                  <span className="font-mono text-xl md:text-2xl font-bold text-on-surface">
                     {selectedPlayer.masterScore !== null ? selectedPlayer.masterScore.toLocaleString() : "--"} pts
                   </span>
                 </div>
