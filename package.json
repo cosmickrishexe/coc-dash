@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "postinstall": "sed -i 's/\"\\.\\/api\\/\"/\"\\.\\/api\"/g' node_modules/clashofclans.js/package.json"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
