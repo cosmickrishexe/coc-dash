@@ -761,40 +761,44 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 no-scrollbar">
             <button
               onClick={() => setRulesModalOpen(true)}
-              className="h-8 px-3 text-on-surface bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors"
+              className="h-8 px-2.5 md:px-3 text-on-surface bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-colors"
+              title="Scoring Rules"
             >
               <span className="material-symbols-outlined text-sm">tune</span>
-              <span>Scoring Rules</span>
+              <span className="hidden md:inline">Scoring Rules</span>
             </button>
 
             <button
               onClick={handleSyncApi}
               disabled={syncing}
-              className="h-8 px-3 text-on-primary bg-primary hover:bg-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm disabled:opacity-50"
+              className="h-8 px-2.5 md:px-3 text-on-primary bg-primary hover:bg-slate-700 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm disabled:opacity-50"
+              title="Sync API"
             >
               <span className={`material-symbols-outlined text-sm ${syncing ? "animate-spin" : ""}`}>
                 sync
               </span>
-              <span>{syncing ? "Syncing..." : "Sync API"}</span>
+              <span className="hidden md:inline">{syncing ? "Syncing..." : "Sync API"}</span>
             </button>
 
             <button
               onClick={handleFetchWar}
               disabled={warLoading}
-              className="h-8 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-sm disabled:opacity-50"
+              className="h-8 px-2.5 md:px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors shadow-sm disabled:opacity-50"
+              title="War Data"
             >
               <span className={`material-symbols-outlined text-sm ${warLoading ? "animate-spin" : ""}`}>
                 {warLoading ? "sync" : "shield"}
               </span>
-              <span>{warLoading ? "Loading..." : "War Data"}</span>
+              <span className="hidden md:inline">{warLoading ? "Loading..." : "War Data"}</span>
             </button>
 
             <button
               onClick={() => setUploadModalOpen(true)}
-              className="h-8 px-3 bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              className="h-8 px-2.5 md:px-3 bg-amber-50 text-amber-900 border border-amber-300 hover:bg-amber-100 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+              title="AI OCR Scan"
             >
               <span className="material-symbols-outlined text-sm">auto_awesome</span>
-              <span>AI OCR Scan</span>
+              <span className="hidden md:inline">AI OCR Scan</span>
             </button>
           </div>
         </header>
