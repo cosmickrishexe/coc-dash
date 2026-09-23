@@ -1,3 +1,5 @@
+import { Client } from 'clashofclans.js';
+
 export class SupercellApiError extends Error {
   statusCode: number;
   reason?: string;
@@ -12,7 +14,33 @@ export class SupercellApiError extends Error {
   }
 }
 
-export async function fetchClanData(clanTag: string, token: string) {
+let cocClient: Client | null = null;
+
+export async function getValidToken(): Promise<string> {
+  const email = process.env.COC_EMAIL;
+  const password = process.env.COC_PASSWORD;
+
+  if (email && password) {
+    if (!cocClient) {
+      cocClient = new Client();
+      await cocClient.login({ email, password });
+    }
+    // @ts-ignore - internal property access to extract auto-managed token
+    const keys = cocClient.rest?.requestHandler?.keys || [];
+    if (keys.length > 0) {
+      return keys[0];
+    }
+  }
+
+  const fallbackToken = process.env.COC_API_TOKEN;
+  if (!fallbackToken) {
+    throw new Error("Missing COC_EMAIL/COC_PASSWORD or COC_API_TOKEN in environment variables.");
+  }
+  return fallbackToken;
+}
+
+export async function fetchClanData(clanTag: string, providedToken?: string) {
+  const token = providedToken || await getValidToken();
   const formattedTag = encodeURIComponent(clanTag.startsWith("#") ? clanTag : `#${clanTag}`);
   const url = `https://api.clashofclans.com/v1/clans/${formattedTag}`;
 
@@ -49,7 +77,8 @@ export async function fetchClanData(clanTag: string, token: string) {
   return await res.json();
 }
 
-export async function fetchCurrentWar(clanTag: string, token: string) {
+export async function fetchCurrentWar(clanTag: string, providedToken?: string) {
+  const token = providedToken || await getValidToken();
   const formattedTag = encodeURIComponent(clanTag.startsWith("#") ? clanTag : `#${clanTag}`);
   const url = `https://api.clashofclans.com/v1/clans/${formattedTag}/currentwar`;
 
@@ -67,7 +96,8 @@ export async function fetchCurrentWar(clanTag: string, token: string) {
   return await res.json();
 }
 
-export async function fetchWarLog(clanTag: string, token: string) {
+export async function fetchWarLog(clanTag: string, providedToken?: string) {
+  const token = providedToken || await getValidToken();
   const formattedTag = encodeURIComponent(clanTag.startsWith("#") ? clanTag : `#${clanTag}`);
   const url = `https://api.clashofclans.com/v1/clans/${formattedTag}/warlog?limit=10`;
 
@@ -85,7 +115,8 @@ export async function fetchWarLog(clanTag: string, token: string) {
   return await res.json();
 }
 
-export async function fetchRaidSeasons(clanTag: string, token: string) {
+export async function fetchRaidSeasons(clanTag: string, providedToken?: string) {
+  const token = providedToken || await getValidToken();
   const formattedTag = encodeURIComponent(clanTag.startsWith("#") ? clanTag : `#${clanTag}`);
   const url = `https://api.clashofclans.com/v1/clans/${formattedTag}/capitalraidseasons?limit=5`;
 

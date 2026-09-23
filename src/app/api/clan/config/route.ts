@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
+
+export const dynamic = "force-dynamic";
 import path from "path";
 import { fetchClanData, SupercellApiError } from "@/lib/coc-api";
 

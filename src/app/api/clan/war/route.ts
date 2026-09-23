@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { fetchCurrentWar, fetchWarLog, SupercellApiError } from "@/lib/coc-api";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const token = process.env.COC_API_TOKEN;
   const clanTag = process.env.CLAN_TAG || "#2QVJ990GL";
