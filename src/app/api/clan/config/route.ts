@@ -1,7 +1,6 @@
+export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
-
-export const dynamic = "force-dynamic";
 import path from "path";
 import { fetchClanData, SupercellApiError } from "@/lib/coc-api";
 
@@ -39,7 +38,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { password, clanTag } = body;
+    const { password, cocApiToken, clanTag } = body;
 
     const expectedPin = process.env.SCORING_ADMIN_PIN || "9449";
     if (String(password) !== expectedPin) {
@@ -49,10 +48,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!cocApiToken || typeof cocApiToken !== "string" || cocApiToken.trim().length < 10) {
+      return NextResponse.json(
+        { success: false, error: "Invalid API token provided." },
+        { status: 400 }
+      );
+    }
+
+    const cleanToken = cocApiToken.trim();
     const cleanTag = (clanTag && typeof clanTag === "string" ? clanTag.trim() : (process.env.CLAN_TAG || "#2QVJ990GL"));
     const formattedTag = cleanTag.startsWith("#") ? cleanTag : `#${cleanTag}`;
 
     // 1. Update in-memory process environment
+    process.env.COC_API_TOKEN = cleanToken;
     process.env.CLAN_TAG = formattedTag;
 
     // 2. Persist to .data/store.json
@@ -61,6 +69,7 @@ export async function POST(req: NextRequest) {
       if (fs.existsSync(storePath)) {
         const storeContent = JSON.parse(fs.readFileSync(storePath, "utf-8"));
         storeContent.cocConfig = {
+          token: cleanToken,
           clanTag: formattedTag,
           updatedAt: new Date().toISOString(),
         };
@@ -75,6 +84,7 @@ export async function POST(req: NextRequest) {
       const envPath = path.join(process.cwd(), ".env.local");
       if (fs.existsSync(envPath)) {
         let envContent = fs.readFileSync(envPath, "utf-8");
+        envContent = envContent.replace(/^COC_API_TOKEN=.*$/m, `COC_API_TOKEN=${cleanToken}`);
         envContent = envContent.replace(/^CLAN_TAG=.*$/m, `CLAN_TAG=${formattedTag}`);
         fs.writeFileSync(envPath, envContent);
       }
@@ -88,7 +98,7 @@ export async function POST(req: NextRequest) {
     let requiredIp = "";
 
     try {
-      const clanData = await fetchClanData(formattedTag);
+      const clanData = await fetchClanData(formattedTag, cleanToken);
       connectionStatus = "connected";
       testMessage = `Verified successfully! Connected to clan "${clanData.name}" (${clanData.members} members).`;
     } catch (err: unknown) {

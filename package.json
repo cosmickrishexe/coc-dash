@@ -6,12 +6,10 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "sed -i 's/\"\\.\\/api\\/\"/\"\\.\\/api\"/g' node_modules/clashofclans.js/package.json"
+    "lint": "next lint"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
-    "clashofclans.js": "^4.0.5",
     "lucide-react": "^1.47.0",
     "next": "^16.3.5",
     "react": "^19.3.0",
