@@ -22,6 +22,7 @@ export default function DashboardPage() {
   const [sortAsc, setSortAsc] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
 
   // --- Modals & Slide-Overs ---
   const [selectedPlayer, setSelectedPlayer] = useState<PlayerRecord | null>(null);
@@ -516,10 +517,10 @@ export default function DashboardPage() {
   const penalizedCount = players.filter((p) => p.missed !== null && p.missed > 0).length;
 
   return (
-    <div className="flex h-screen w-full bg-surface text-on-surface overflow-hidden">
+    <div className="flex h-screen w-full bg-surface text-on-surface overflow-hidden relative">
       
       {/* Toast Container */}
-      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none px-4 md:px-0">
         {toasts.map((t) => (
           <div
             key={t.id}
@@ -531,16 +532,24 @@ export default function DashboardPage() {
                 : "bg-surface-container-lowest border-outline-variant text-on-surface"
             }`}
           >
-            <span className="material-symbols-outlined text-sm">
+            <span className="material-symbols-outlined text-sm shrink-0">
               {t.type === "error" ? "error" : t.type === "success" ? "check_circle" : "info"}
             </span>
-            <span>{t.message}</span>
+            <span className="flex-1">{t.message}</span>
           </div>
         ))}
       </div>
 
+      {/* Mobile Sidebar Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* ================= 1. DOCKED LEFT SIDEBAR ================= */}
-      <aside className="w-64 border-r border-outline-variant bg-surface-container-lowest flex flex-col justify-between shrink-0 select-none">
+      <aside className={`fixed inset-y-0 left-0 z-40 w-72 lg:w-64 border-r border-outline-variant bg-surface-container-lowest flex flex-col justify-between shrink-0 select-none transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
         <div>
           {/* Clan Brand Rail */}
           <div className="p-4 border-b border-outline-variant flex items-center gap-3">
@@ -698,32 +707,42 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         
         {/* Top Global Header */}
-        <header className="h-14 border-b border-outline-variant bg-surface-container-lowest px-6 flex items-center justify-between shrink-0 gap-4">
+        <header className="h-auto md:h-14 py-3 md:py-0 border-b border-outline-variant bg-surface-container-lowest px-4 md:px-6 flex flex-col md:flex-row items-center justify-between shrink-0 gap-3 md:gap-4">
           
-          {/* Search Bar */}
-          <div className="relative w-80">
-            <span className="material-symbols-outlined absolute left-2.5 top-2 text-outline text-lg">
-              search
-            </span>
-            <input
-              type="text"
-              placeholder="Filter by player name or #tag..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-8 pl-8 pr-7 bg-surface-container-low border border-outline-variant rounded-lg text-xs font-mono placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2 top-2 text-outline hover:text-on-surface"
-              >
-                <span className="material-symbols-outlined text-sm">close</span>
-              </button>
-            )}
+          <div className="flex items-center w-full md:w-auto justify-between md:justify-start gap-3 md:gap-4">
+            {/* Hamburger Menu (Mobile Only) */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(true)} 
+              className="lg:hidden p-1.5 rounded-lg bg-surface-container-low border border-outline-variant text-on-surface flex items-center justify-center"
+            >
+              <span className="material-symbols-outlined text-lg">menu</span>
+            </button>
+
+            {/* Search Bar */}
+            <div className="relative flex-1 md:w-80">
+              <span className="material-symbols-outlined absolute left-2.5 top-2 text-outline text-lg">
+                search
+              </span>
+              <input
+                type="text"
+                placeholder="Filter by player name or #tag..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-8 pl-8 pr-7 bg-surface-container-low border border-outline-variant rounded-lg text-xs font-mono placeholder:text-outline focus:outline-none focus:ring-1 focus:ring-primary"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2 top-2 text-outline hover:text-on-surface"
+                >
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              )}
+            </div>
           </div>
 
-          {/* Active Breadcrumb / View Badge */}
-          <div className="flex items-center gap-2">
+          {/* Active Breadcrumb / View Badge (Hidden on mobile) */}
+          <div className="hidden lg:flex items-center gap-2">
             <span className="font-mono text-xs px-2.5 py-1 bg-surface-container-low border border-outline-variant rounded-full font-semibold text-on-surface">
               {activeCategory === "wars"
                 ? "View: Clan Wars & CWL"
@@ -738,8 +757,8 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          {/* Quick Actions */}
-          <div className="flex items-center gap-2">
+          {/* Quick Actions (Scrollable on mobile) */}
+          <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 no-scrollbar">
             <button
               onClick={() => setRulesModalOpen(true)}
               className="h-8 px-3 text-on-surface bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors"
@@ -784,9 +803,9 @@ export default function DashboardPage() {
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
           
           {/* Clan Hero Identity Banner */}
-          <div className="p-5 bg-surface-container-lowest border border-outline-variant rounded-2xl flex items-center justify-between shadow-xs">
+          <div className="p-5 bg-surface-container-lowest border border-outline-variant rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between shadow-xs gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-surface-container-low border border-dashed border-outline flex items-center justify-center font-mono font-bold text-2xl text-primary">
+              <div className="w-14 h-14 shrink-0 rounded-2xl bg-surface-container-low border border-dashed border-outline flex items-center justify-center font-mono font-bold text-2xl text-primary">
                 {clan?.badgeUrl ? (
                   <img src={clan.badgeUrl} alt="Badge" className="w-11 h-11 object-contain" />
                 ) : (
@@ -814,7 +833,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Right Summary: Clan Average Master Score */}
-            <div className="text-right flex flex-col items-end">
+            <div className="text-left md:text-right flex flex-col items-start md:items-end w-full md:w-auto border-t md:border-t-0 border-outline-variant pt-4 md:pt-0">
               <span className="font-mono text-[11px] text-on-surface-variant font-medium">
                 Clan Average Master Score
               </span>
@@ -909,7 +928,7 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   
                   {/* Category Buttons */}
-                  <div className="inline-flex rounded-lg bg-surface-container-high p-0.5 text-xs font-mono">
+                  <div className="inline-flex rounded-lg bg-surface-container-high p-0.5 text-xs font-mono overflow-x-auto w-full md:w-auto no-scrollbar">
                     <button
                       onClick={() => {
                         setActiveCategory("all");
