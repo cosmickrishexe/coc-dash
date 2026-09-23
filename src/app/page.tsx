@@ -297,10 +297,6 @@ export default function DashboardPage() {
       addToast("Admin password required to update API credentials.", "error");
       return;
     }
-    if (!cocApiTokenInput.trim()) {
-      addToast("Please paste your Supercell API token.", "error");
-      return;
-    }
 
     setApiSaving(true);
     try {
@@ -309,7 +305,6 @@ export default function DashboardPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           password: "9449",
-          cocApiToken: cocApiTokenInput.trim(),
           clanTag: clanTagInput.trim(),
         }),
       });
@@ -1777,54 +1772,14 @@ export default function DashboardPage() {
                 </div>
 
                 <p className="text-[11px] text-on-surface-variant font-mono">
-                  When switching Wi-Fi or mobile hotspots, your public IP changes and Supercell blocks requests. Copy your detected IP below to whitelist on developer.clashofclans.com, or paste a newly generated token here.
+                  Your application is now configured with automated Dynamic IP management. When your IP changes on Vercel or locally, the backend will transparently rotate and provision valid Supercell tokens.
                 </p>
 
-                {/* Detected Outgoing IP with 1-click Copy */}
-                <div className="p-3 bg-white border border-outline-variant rounded-lg flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-primary text-base">router</span>
-                    <div>
-                      <span className="text-[10px] font-mono text-on-surface-variant block">Your Current Public IP:</span>
-                      <span className="font-mono font-bold text-sm text-on-surface">{detectedPublicIp}</span>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(detectedPublicIp);
-                      addToast(`Copied IP ${detectedPublicIp} to clipboard!`, "success");
-                    }}
-                    className="px-2.5 py-1.5 bg-surface-container-low hover:bg-surface-container-high border border-outline-variant rounded-md text-xs font-mono font-semibold flex items-center gap-1 transition-colors"
-                  >
-                    <span className="material-symbols-outlined text-xs">content_copy</span>
-                    <span>Copy IP</span>
-                  </button>
-                </div>
+
 
                 {/* Token & Clan Tag Inputs */}
                 <div className="space-y-2">
-                  <div>
-                    <label className="block font-mono text-[10px] text-on-surface-variant mb-1">
-                      Update Supercell API Bearer Token:
-                    </label>
-                    <textarea
-                      disabled={!isRulesUnlocked}
-                      rows={2}
-                      placeholder={
-                        isRulesUnlocked
-                          ? "Paste newly generated Supercell JWT token here..."
-                          : "•••••••••••••••••••••••••••••••••••••••••••••••• (Unlock with admin password to change)"
-                      }
-                      value={cocApiTokenInput}
-                      onChange={(e) => setCocApiTokenInput(e.target.value)}
-                      className={`w-full p-2 border border-outline-variant rounded text-xs font-mono resize-none ${
-                        isRulesUnlocked
-                          ? "bg-white text-on-surface focus:ring-1 focus:ring-primary"
-                          : "bg-slate-100 text-slate-500 cursor-not-allowed"
-                      }`}
-                    />
-                  </div>
+
 
                   <div className="flex items-center gap-3">
                     <div className="flex-1">
